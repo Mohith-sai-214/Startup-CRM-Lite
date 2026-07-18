@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import rateLimit from 'express-rate-limit';
 import mongoSanitize from './middleware/mongoSanitize.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import local configurations, routes, and custom error handler
 import { connectDB } from './config/database.js';
@@ -13,8 +15,16 @@ import authRoutes from './routes/authRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
+import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // 1. Environment variables loading and validation
-dotenv.config();
+// Attempt to load from local backend/.env first, otherwise fallback to current directory
+const localEnvPath = path.join(__dirname, '.env');
+const envPath = fs.existsSync(localEnvPath) ? localEnvPath : path.join(process.cwd(), '.env');
+dotenv.config({ path: envPath });
 
 /**
  * Validates that all required environment configurations are loaded.
@@ -118,6 +128,21 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date()
   });
 });
+
+// Serve static assets in production mode
+if (NODE_ENV === 'production') {
+  const frontendDist = path.join(__dirname, '../dist');
+  app.use(express.static(frontendDist));
+
+  // Any non-API route serves index.html
+  app.get('*', (req, res, next) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.resolve(frontendDist, 'index.html'));
+    } else {
+      next();
+    }
+  });
+}
 
 // Centralized error handler registered last (Must catch all downstream errors)
 app.use(errorHandler);

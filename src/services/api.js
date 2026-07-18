@@ -6,7 +6,9 @@ import toast from 'react-hot-toast';
  * Automatically injects JWT tokens and handles global exceptions (401 session expiry, server unreachable).
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000'
+  baseURL: import.meta.env.DEV
+    ? (import.meta.env.VITE_API_URL || 'http://localhost:5000')
+    : ''
 });
 
 // 1. Request Interceptor: Attach bearer authorization header dynamically
