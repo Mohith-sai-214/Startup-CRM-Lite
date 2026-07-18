@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --tooltip-bg: rgba(255, 255, 255, 0.95);
+  --tooltip-border: #E2E8F0;
+  --tooltip-text: #1E293B;
+  --tooltip-label: #0F172A;
+}
+
+.dark {
+  --tooltip-bg: rgba(31, 41, 55, 0.95);
+  --tooltip-border: #374151;
+  --tooltip-text: #F3F4F6;
+  --tooltip-label: #FFFFFF;
+}
