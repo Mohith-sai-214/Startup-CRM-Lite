@@ -50,9 +50,6 @@ function ProtectedRoute() {
 function AppLayout() {
   const {
     leads,
-    selectedLead,
-    setSelectedLead,
-    isAddLeadOpen,
     setIsAddLeadOpen
   } = useLeads();
 

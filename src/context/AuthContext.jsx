@@ -12,6 +12,12 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const handleLogoutClean = () => {
+    authService.logout();
+    setUser(null);
+    setToken(null);
+  };
+
   // 1. Restore session on initial mount if token is stored in localStorage
   useEffect(() => {
     const restoreSession = async () => {
@@ -37,12 +43,6 @@ export const AuthProvider = ({ children }) => {
 
     restoreSession();
   }, []);
-
-  const handleLogoutClean = () => {
-    authService.logout();
-    setUser(null);
-    setToken(null);
-  };
 
   /**
    * Logins a user using email and password.
