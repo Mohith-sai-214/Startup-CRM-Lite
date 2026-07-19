@@ -48,7 +48,9 @@ export default function Register() {
       console.error('Registration error:', err);
       // Collect errors from express-validator formats
       let errorMsg = 'Registration failed. Please check your credentials.';
-      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+      if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
+        errorMsg = 'Cannot connect to backend server. Please verify the server is running.';
+      } else if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
         errorMsg = err.response.data.errors.map((e) => e.message).join(', ');
       } else if (err.response?.data?.message) {
         errorMsg = err.response.data.message;
