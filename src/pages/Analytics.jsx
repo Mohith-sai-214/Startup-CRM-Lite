@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import leadService from '../services/leadService.js';
 import { useLeads } from '../context/LeadContext';
 import {
   Users,
@@ -36,11 +37,30 @@ import {
 } from '../utils/analyticsHelpers';
 
 export default function Analytics() {
-  const { leads, setIsAddLeadOpen } = useLeads();
+  const { setIsAddLeadOpen } = useLeads();
   const [dateRange, setDateRange] = useState('This Year');
+  const [allLeads, setAllLeads] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAllLeadsForAnalytics = async () => {
+      setIsLoading(true);
+      try {
+        const res = await leadService.getLeads({ limit: 5000 });
+        if (res && res.data) {
+          setAllLeads(res.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch leads for analytics:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAllLeadsForAnalytics();
+  }, []);
 
   // Augment leads context with deterministic mock records to achieve 100-lead analytics dashboard
-  const rawAugmentedLeads = getAugmentedLeads(leads);
+  const rawAugmentedLeads = getAugmentedLeads(allLeads);
 
   // Date range filtering helper
   const filterLeadsByRange = (leadsList, range) => {
@@ -162,6 +182,15 @@ export default function Analytics() {
       color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/15',
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin dark:border-zinc-800 dark:border-t-blue-500" />
+        <span className="text-xs font-semibold text-slate-400 dark:text-zinc-500">Loading analytics...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
