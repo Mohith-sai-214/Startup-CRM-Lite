@@ -152,10 +152,23 @@ export default function Leads() {
       date: new Date().toISOString().split('T')[0], // Calendar stamp
     };
 
-    // Calculate updated comments array
-    const updatedNotes = [...(selectedLead.notes || []), newComment];
+    // Calculate updated comments array safely
+    const currentNotes = Array.isArray(selectedLead.notes)
+      ? selectedLead.notes
+      : typeof selectedLead.notes === 'string' && selectedLead.notes.trim()
+        ? [
+            {
+              id: 'note-init',
+              author: 'Lead Creator',
+              text: selectedLead.notes.trim(),
+              date: selectedLead.createdAt
+                ? new Date(selectedLead.createdAt).toISOString().split('T')[0]
+                : new Date().toISOString().split('T')[0]
+            }
+          ]
+        : [];
+    const updatedNotes = [...currentNotes, newComment];
     updateLead(selectedLead.id, { notes: updatedNotes }); // Trigger context update
-
     setNoteInput(''); // Reset comment input box
   };
 
@@ -381,7 +394,7 @@ export default function Leads() {
                 </form>
 
                 <div className="space-y-2 mt-2 pt-2 border-t border-slate-100 dark:border-gray-700/40 max-h-[220px] overflow-y-auto pr-1">
-                  {selectedLead.notes && selectedLead.notes.length > 0 ? (
+                  {Array.isArray(selectedLead.notes) && selectedLead.notes.length > 0 ? (
                     selectedLead.notes.map((note) => (
                       <div key={note.id} className="p-2.5 bg-slate-50 dark:bg-gray-800/40 border border-slate-200/50 dark:border-gray-700 rounded-lg text-[11px]">
                         <div className="flex justify-between font-semibold text-slate-700 dark:text-gray-300">
@@ -393,6 +406,16 @@ export default function Leads() {
                         </p>
                       </div>
                     ))
+                  ) : typeof selectedLead.notes === 'string' && selectedLead.notes.trim().length > 0 ? (
+                    <div className="p-2.5 bg-slate-50 dark:bg-gray-800/40 border border-slate-200/50 dark:border-gray-700 rounded-lg text-[11px]">
+                      <div className="flex justify-between font-semibold text-slate-700 dark:text-gray-300">
+                        <span>Lead Creator</span>
+                        <span className="text-[9px] text-slate-400 dark:text-gray-500 font-normal">Original Note</span>
+                      </div>
+                      <p className="text-slate-600 dark:text-gray-400 mt-1 leading-relaxed whitespace-pre-wrap">
+                        {selectedLead.notes}
+                      </p>
+                    </div>
                   ) : (
                     <div className="text-center py-4 text-slate-400 dark:text-gray-500">
                       No logs or comments created yet.

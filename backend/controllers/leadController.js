@@ -82,6 +82,7 @@ export const getLeads = async (req, res, next) => {
     // Execute queries in parallel
     const [leads, total] = await Promise.all([
       Lead.find(filter)
+        .populate('owner', 'name email')
         .sort(sort)
         .skip(skip)
         .limit(limitNum),

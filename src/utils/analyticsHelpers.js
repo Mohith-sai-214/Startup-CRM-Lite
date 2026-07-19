@@ -23,8 +23,9 @@ export function getAugmentedLeads(activeLeads = []) {
   return activeLeads.map((lead) => {
     // If no value is specified, assign a realistic default
     const value = lead.value || (lead.status === 'Won' ? 75000 : 45000);
-    // Ensure an owner is present for performer metrics
-    const owner = lead.owner || { name: 'Sarah', initials: 'S', color: 'bg-purple-500' };
+    // Ensure a populated owner is present for performer metrics (prevent object-vs-string errors)
+    const hasPopulatedOwner = lead.owner && typeof lead.owner === 'object' && typeof lead.owner.name === 'string';
+    const owner = hasPopulatedOwner ? lead.owner : { name: 'Sarah', initials: 'S', color: 'bg-purple-500' };
     
     return {
       ...lead,
@@ -214,7 +215,7 @@ export function getAvgTimeToClose(leads) {
   wonLeads.forEach(lead => {
     let closedDays = 0;
     
-    if (lead.notes && lead.notes.length > 0) {
+    if (Array.isArray(lead.notes) && lead.notes.length > 0) {
       const createdTime = new Date(lead.createdAt).getTime();
       const noteTimes = lead.notes
         .map(n => new Date(n.date).getTime())
