@@ -68,8 +68,9 @@ export const login = async (req, res, next) => {
      *   router.post('/login', loginLimiter, ...);
      */
 
-    // 1. Retrieve user including secret password hash
-    const user = await User.findOne({ email }).select('+password');
+    // 1. Retrieve user including secret password hash (ensure case-insensitive lookup)
+    const cleanEmail = email ? email.toLowerCase().trim() : '';
+    const user = await User.findOne({ email: cleanEmail }).select('+password');
     if (!user) {
       // Security standard: Never reveal if email or password was wrong
       return errorResponse(res, 'Invalid credentials', 401);
