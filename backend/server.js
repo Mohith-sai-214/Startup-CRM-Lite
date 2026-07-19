@@ -57,43 +57,9 @@ const app = express();
 connectDB();
 
 // 3. Security & Utility Middlewares Configuration
-// A. Global HTTP security headers integration
-app.use(helmet());
-
-// B. General & Auth specific Rate Limiters to defend against DDoS/Brute-force
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes window
-  max: 100, // Limit each IP to 100 requests per window
-  message: {
-    success: false,
-    message: 'Too many requests, please try again later.'
-  }
-});
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes window
-  max: 10, // Limit each IP to 10 auth requests per window (brute-force defense)
-  message: {
-    success: false,
-    message: 'Too many auth attempts.'
-  }
-});
-
-app.use('/api/', generalLimiter);
-app.use('/api/auth/', authLimiter);
-
-// C. MongoDB Query Injection Protection (Sanitizes req.body, req.query, req.params)
-app.use(mongoSanitize());
-
-// D. Environment-dependent request logging formatting
 const NODE_ENV = process.env.NODE_ENV || 'development';
-if (NODE_ENV === 'production') {
-  app.use(morgan('combined')); // Detailed Combined Apache format for production logs
-} else {
-  app.use(morgan('dev')); // Colorized development logging format
-}
 
-// E. Production CORS setup with dynamic allowed origins validation
+// A. Production CORS setup with dynamic allowed origins validation (Must run first for header inclusion)
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'https://your-app.vercel.app'
@@ -116,6 +82,41 @@ app.use(
     credentials: true
   })
 );
+
+// B. Global HTTP security headers integration
+app.use(helmet());
+
+// C. General & Auth specific Rate Limiters to defend against DDoS/Brute-force
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes window
+  max: 100, // Limit each IP to 100 requests per window
+  message: {
+    success: false,
+    message: 'Too many requests, please try again later.'
+  }
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes window
+  max: 10, // Limit each IP to 10 auth requests per window (brute-force defense)
+  message: {
+    success: false,
+    message: 'Too many auth attempts.'
+  }
+});
+
+app.use('/api/', generalLimiter);
+app.use('/api/auth/', authLimiter);
+
+// D. MongoDB Query Injection Protection (Sanitizes req.body, req.query, req.params)
+app.use(mongoSanitize());
+
+// E. Environment-dependent request logging formatting
+if (NODE_ENV === 'production') {
+  app.use(morgan('combined')); // Detailed Combined Apache format for production logs
+} else {
+  app.use(morgan('dev')); // Colorized development logging format
+}
 
 // F. Request body parsing constraints
 app.use(express.json({ limit: '10kb' })); // Mitigate large payload memory starvation attacks
