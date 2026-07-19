@@ -20,106 +20,7 @@ export const STATUS_COLORS = {
  * matching the mockup's counts and large Indian Rupee currency values.
  */
 export function getAugmentedLeads(activeLeads = []) {
-  if (activeLeads.length > 50) {
-    return activeLeads.map((lead) => ({
-      ...lead,
-      value: lead.value || (lead.status === 'Won' ? 75000 : 45000),
-      owner: lead.owner || { name: 'Sarah', initials: 'S', color: 'bg-purple-500' },
-      createdAt: lead.createdAt || new Date().toISOString().split('T')[0],
-      notes: lead.notes || []
-    }));
-  }
-
-  const mockLeads = [];
-  const sources = ['Website', 'Referral', 'LinkedIn', 'Cold Call', 'Email Campaign', 'Other'];
-  
-  // To achieve the target dashboard state:
-  // - Total: 100 leads (approx 92 mock + 8 CRM)
-  // - Won conversion rate: ~31%
-  // - Lost rate: ~10%
-  // We distribute the 92 mock leads as follows:
-  // Won: 30 leads, Lost: 9 leads, and 53 in active pipeline stages.
-  const targetWon = 30;
-  const targetLost = 9;
-  const targetNew = 19;
-  const targetContacted = 14;
-  const targetMeeting = 10;
-  const targetProposal = 10;
-
-  let wonCount = 0;
-  let lostCount = 0;
-  let newCount = 0;
-  let contactedCount = 0;
-  let meetingCount = 0;
-  let proposalCount = 0;
-
-  const now = new Date();
-
-  // Create 92 leads
-  for (let i = 0; i < 92; i++) {
-    // Deterministic math-based pseudo-random generator
-    const random = (seed) => {
-      const x = Math.sin(seed + i * 4.31) * 10000;
-      return x - Math.floor(x);
-    };
-
-    let status = 'New';
-    if (wonCount < targetWon) {
-      status = 'Won';
-      wonCount++;
-    } else if (lostCount < targetLost) {
-      status = 'Lost';
-      lostCount++;
-    } else if (newCount < targetNew) {
-      status = 'New';
-      newCount++;
-    } else if (contactedCount < targetContacted) {
-      status = 'Contacted';
-      contactedCount++;
-    } else if (meetingCount < targetMeeting) {
-      status = 'Meeting Scheduled';
-      meetingCount++;
-    } else if (proposalCount < targetProposal) {
-      status = 'Proposal Sent';
-      proposalCount++;
-    }
-
-    const source = sources[Math.floor(random(1) * sources.length)];
-    
-    // Assign values such that Won Sum ≈ 29,59,000 & Pipeline Sum ≈ 56,69,700
-    const value = status === 'Won'
-      ? Math.floor(60000 + random(2) * 80000)
-      : (status !== 'Lost'
-        ? Math.floor(50000 + random(3) * 110000)
-        : Math.floor(20000 + random(4) * 60000));
-
-    // Spread creation dates over the last 6 months
-    const monthsAgo = Math.floor(random(5) * 6);
-    const dayOffset = Math.floor(random(6) * 27);
-    const createdDate = new Date(now.getFullYear(), now.getMonth() - monthsAgo, 1 + dayOffset);
-
-    // Assign owner names matching the performers list
-    const owners = ['David', 'Rohan', 'Sarah', 'Alex'];
-    const ownerName = owners[Math.floor(random(7) * owners.length)];
-
-    mockLeads.push({
-      id: `mock-bg-${i}`,
-      name: `Lead Partner ${i + 1}`,
-      company: `Enterprise ${i + 1} Corp`,
-      email: `contact${i}@enterprise.co`,
-      phone: `+91 98765 000${String(i).padStart(2, '0')}`,
-      status,
-      source,
-      value,
-      owner: { name: ownerName, initials: ownerName[0], color: 'bg-blue-500' },
-      createdAt: createdDate.toISOString().split('T')[0],
-      notes: status === 'Won' ? [{ id: `n-${i}`, author: ownerName, text: 'Deal closed successfully.', date: createdDate.toISOString().split('T')[0] }] : []
-    });
-  }
-
-  // Combine with active CRM leads
-  // Map active leads to ensure they have values, owners and proper dates
-  const processedActive = activeLeads.map((lead) => {
+  return activeLeads.map((lead) => {
     // If no value is specified, assign a realistic default
     const value = lead.value || (lead.status === 'Won' ? 75000 : 45000);
     // Ensure an owner is present for performer metrics
@@ -132,8 +33,6 @@ export function getAugmentedLeads(activeLeads = []) {
       createdAt: lead.createdAt || new Date().toISOString().split('T')[0]
     };
   });
-
-  return [...processedActive, ...mockLeads];
 }
 
 /**
