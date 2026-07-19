@@ -57,7 +57,7 @@ export default function Leads() {
       search: searchQuery,
       status: activeFilter
     });
-  }, [searchQuery, activeFilter]);
+  }, [searchQuery, activeFilter, fetchLeads]);
 
   // Handler callback to reset searches and statuses
   const handleClearFilters = () => {

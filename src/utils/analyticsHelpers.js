@@ -87,17 +87,11 @@ export function getAugmentedLeads(activeLeads = []) {
     const source = sources[Math.floor(random(1) * sources.length)];
     
     // Assign values such that Won Sum ≈ 29,59,000 & Pipeline Sum ≈ 56,69,700
-    let value = 0;
-    if (status === 'Won') {
-      // average value ≈ 95,000 (from 60k to 140k)
-      value = Math.floor(60000 + random(2) * 80000);
-    } else if (status !== 'Lost') {
-      // average pipeline value ≈ 107,000 (from 50k to 160k)
-      value = Math.floor(50000 + random(3) * 110000);
-    } else {
-      // Lost deals
-      value = Math.floor(20000 + random(4) * 60000);
-    }
+    const value = status === 'Won'
+      ? Math.floor(60000 + random(2) * 80000)
+      : (status !== 'Lost'
+        ? Math.floor(50000 + random(3) * 110000)
+        : Math.floor(20000 + random(4) * 60000));
 
     // Spread creation dates over the last 6 months
     const monthsAgo = Math.floor(random(5) * 6);
@@ -125,7 +119,7 @@ export function getAugmentedLeads(activeLeads = []) {
 
   // Combine with active CRM leads
   // Map active leads to ensure they have values, owners and proper dates
-  const processedActive = activeLeads.map((lead, index) => {
+  const processedActive = activeLeads.map((lead) => {
     // If no value is specified, assign a realistic default
     const value = lead.value || (lead.status === 'Won' ? 75000 : 45000);
     // Ensure an owner is present for performer metrics

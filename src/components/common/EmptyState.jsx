@@ -10,7 +10,7 @@ import { Users, FilterX, PlusCircle } from 'lucide-react'; // Import icon marker
  * @param {Function} props.onAddLead - Handler callback to open creation modal
  * @returns {React.JSX.Element} Friendly empty illustration card matching results states
  */
-export default function EmptyState({ totalLeads, filteredLeads, onClear, onAddLead }) {
+export default function EmptyState({ totalLeads, onClear, onAddLead }) {
   // If the total database contains zero leads, display a database setup guide
   const isDatabaseEmpty = totalLeads === 0;
 

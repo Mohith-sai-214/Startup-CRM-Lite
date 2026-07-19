@@ -1,5 +1,5 @@
 import React from 'react'; // Import React core module
-import { Edit, Trash2, DollarSign } from 'lucide-react'; // Import Lucide icons
+import { Edit, Trash2 } from 'lucide-react'; // Import Lucide icons
 import StatusBadge from './StatusBadge'; // Import StatusBadge component for colored pill badges
 
 /**

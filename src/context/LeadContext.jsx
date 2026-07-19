@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import leadService from '../services/leadService.js';
 import { useAuth } from './AuthContext.jsx';
@@ -41,7 +41,7 @@ export const LeadProvider = ({ children }) => {
    * READ: Fetch lead list from the database.
    * @param {Object} [params] - Query parameters (status, search, page, etc.).
    */
-  const fetchLeads = async (params = {}) => {
+  const fetchLeads = useCallback(async (params = {}) => {
     setIsLoading(true);
     try {
       const res = await leadService.getLeads(params);
@@ -59,12 +59,12 @@ export const LeadProvider = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   /**
    * STATS: Fetch consolidated statistics from the database.
    */
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const [statsRes, monthlyRes] = await Promise.all([
         leadService.getLeadStats(),
@@ -79,7 +79,7 @@ export const LeadProvider = ({ children }) => {
     } catch (error) {
       console.error('Failed to fetch stats:', error);
     }
-  };
+  }, []);
 
   // Automatically load leads on mount or when token updates (user session initialized)
   useEffect(() => {
@@ -100,7 +100,7 @@ export const LeadProvider = ({ children }) => {
       });
       setMonthlyStats([]);
     }
-  }, [token]);
+  }, [token, fetchLeads, fetchStats]);
 
   /**
    * CREATE: Adds a new lead record to the database.

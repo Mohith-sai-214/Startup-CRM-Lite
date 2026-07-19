@@ -5,7 +5,7 @@ export default function PieChartCard({ data }) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
   const activeSlices = data.filter(item => item.value > 0);
 
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, index, name, value }) => {
+  const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, index, name, value }) => {
     const RADIAN = Math.PI / 180;
     // Position labels slightly outside the outer radius
     const radius = outerRadius + 14;

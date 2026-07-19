@@ -50,7 +50,8 @@ function ProtectedRoute() {
 function AppLayout() {
   const {
     leads,
-    setIsAddLeadOpen
+    setIsAddLeadOpen,
+    setSelectedLead
   } = useLeads();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

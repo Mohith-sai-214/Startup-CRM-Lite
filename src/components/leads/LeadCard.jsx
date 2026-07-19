@@ -1,5 +1,5 @@
 import React from 'react'; // Import React core library
-import { Mail, Phone, Edit, Trash2, DollarSign, Globe } from 'lucide-react'; // Import icons from lucide-react
+import { Mail, Phone, Edit, Trash2, DollarSign } from 'lucide-react'; // Import icons from lucide-react
 import StatusBadge from './StatusBadge'; // Import StatusBadge component to display colored badges
 
 /**

@@ -59,7 +59,7 @@ export default function SalesFunnelCard({ data }) {
             viewBox="0 0 400 260"
             className="w-full h-full drop-shadow-md overflow-visible"
           >
-            {funnelStages.map((stage, idx) => {
+            {funnelStages.map((stage) => {
               const isHovered = hoveredStage === stage.id;
               // Conversion rate of this stage relative to total
               const conversion = total > 0 ? ((stage.count / total) * 100).toFixed(0) : 0;

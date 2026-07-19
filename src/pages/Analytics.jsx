@@ -6,12 +6,11 @@ import {
   Hourglass,
   AlertCircle,
   TrendingUp,
-  CreditCard,
   IndianRupee,
   Calendar,
   Sparkles
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+
 
 // Analytics components
 import PieChartCard from '../components/analytics/PieChartCard';
